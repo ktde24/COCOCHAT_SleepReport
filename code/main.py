@@ -8,17 +8,14 @@ from datetime import datetime, timedelta
 from langchain.chat_models import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
-import mysql.connector
+#import mysql.connector
+import pymysql
 from langchain_core.output_parsers import StrOutputParser 
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chains.conversation.memory import ConversationSummaryMemory
 import tiktoken
 
-# Adjust the file paths
-#icon_path = os.path.join('COCOCHAT_SLEEPREPORT', 'ChatBot', 'Data', 'icon', 'free-icon-baby-8058366.png')
-#dr_coco_icon_path = os.path.join('COCOCHAT_SLEEPREPORT', 'ChatBot', 'Data', 'icon', 'Dr.COCO.png')
-#db_save_path = os.path.join('COCOCHAT_SLEEPREPORT', 'ChatBot', 'Data', 'vectordb', 'baby')
 
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
@@ -111,29 +108,32 @@ def format_minutes(minutes):
 
 # Mysql 연결
 def connect_to_database():
-    return mysql.connector.connect(
+    return pymysql.connect(
         host='172.31.128.1',
         user='guest',
         password='0000',
-        database='ChatbotTest'
+        database='ChatbotTest',
+        cursorclass=pymysql.cursors.DictCursor
     )
 
 # 주간 데이터 가져오기
 def fetch_weekly_sleep_data():
     mydb = connect_to_database()
-    week_ago = datetime.now() - timedelta(days=7)
-    week_ago_str = week_ago.strftime('%Y-%m-%d')
-    today_str = datetime.now().strftime('%Y-%m-%d')
+    with mydb.cursor() as cursor:
+        week_ago = datetime.now() - timedelta(days=7)
+        week_ago_str = week_ago.strftime('%Y-%m-%d')
+        today_str = datetime.now().strftime('%Y-%m-%d')
 
-    query = """
-    SELECT date, time_daysleep, time_nightsleep, time_totalsleep, num_daysleep, child_age, child_name
-    FROM BabySleepRecord
-    WHERE date BETWEEN %s AND %s
-    ORDER BY date ASC;
-    """
-    df = pd.read_sql(query, mydb, params=(week_ago_str, today_str))
+        query = """
+        SELECT date, time_daysleep, time_nightsleep, time_totalsleep, num_daysleep, child_age, child_name
+        FROM BabySleepRecord
+        WHERE date BETWEEN %s AND %s
+        ORDER BY date ASC;
+        """
+        cursor.execute(query, (week_ago_str, today_str))
+        result = cursor.fetchall()
     mydb.close()
-    return df
+    return pd.DataFrame(result)
 
 # 색상 코드
 day_sleep_color = '#fdc004'  
