@@ -1,0 +1,10 @@
+openai
+streamlit
+langchain
+tiktoken
+sentence-transformers==2.3.1
+faiss-gpu==1.7.2
+numpy
+pandas
+plotly==5.19.0
+matplotlib
