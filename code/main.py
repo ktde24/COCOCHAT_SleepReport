@@ -16,7 +16,15 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.chains.conversation.memory import ConversationSummaryMemory
 import tiktoken
 
+# 경로
+current_dir=os.path.dirname(__file__)
+chatbot_dir=os.path.dirname(current_dir)
+data_dir=os.path.join(chatbot_dir, 'Data', 'vectordbbasicparenting_faiss_index')
+#db_path=os.path.join(data_dir, "index.faiss")
 
+icon_path=os.path.join(chatbot_dir, 'Data', 'icon')
+pic_path=os.path.join(icon_path, "Dr.COCO.png")
+pic2_path = os.path.join(icon_path, "baby.png")
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 os.environ['TOKENIZERS_PARALLELISM'] = st.secrets['TOKENIZERS_PARALLELISM']
@@ -60,15 +68,6 @@ memory = ConversationSummaryMemory(
 
 category = ""
 
-# 경로
-current_dir=os.path.dirname(__file__)
-chatbot_dir=os.path.dirname(current_dir)
-data_dir=os.path.join(chatbot_dir, 'Data', 'vectordbbasicparenting_faiss_index')
-#db_path=os.path.join(data_dir, "index.faiss")
-
-icon_path=os.path.join(chatbot_dir, 'Data', 'icon')
-pic_path=os.path.join(icon_path, "Dr.COCO.png")
-pic2_path = os.path.join(icon_path, "baby.png")
 
 
 
@@ -109,7 +108,7 @@ def format_minutes(minutes):
 # Mysql 연결
 def connect_to_database():
     return pymysql.connect(
-        host='172.31.143.66',
+        host='0000',
         user='guest',
         password='0000',
         database='ChatbotTest',
