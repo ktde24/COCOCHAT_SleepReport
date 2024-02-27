@@ -109,6 +109,7 @@ def format_minutes(minutes):
 def connect_to_database():
     return pymysql.connect(
         host='127.0.0.1',
+        port = '3306'
         user='guest',
         password='0000',
         database='ChatbotTest',
