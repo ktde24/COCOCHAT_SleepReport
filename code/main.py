@@ -108,7 +108,7 @@ def format_minutes(minutes):
 # Mysql 연결
 def connect_to_database():
     return pymysql.connect(
-        host='0.0.0.0',
+        host='localhost',
         port = 3306,
         user='guest',
         password='0000',
