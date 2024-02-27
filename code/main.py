@@ -9,7 +9,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 #import mysql.connector
-import pymysql
 from langchain_core.output_parsers import StrOutputParser 
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chains import ConversationalRetrievalChain
@@ -105,35 +104,30 @@ def format_minutes(minutes):
         minutes = 0
     return f"{hours}시간 {minutes}분"
 
-# Mysql 연결
-def connect_to_database():
-    return pymysql.connect(
-        host='172.23.244.171',
-        #port = 3306,
-        user='guest',
-        password='0000',
-        database='ChatbotTest',
-        cursorclass=pymysql.cursors.DictCursor
-    )
+
+# 데이터프레임 생성 
+df = pd.DataFrame({
+    'date': pd.date_range(start='2024-02-21', periods=7, freq='D'),
+    'time_daysleep': [180, 155, 120, 160, 132, 111, 143],  # 분 단위
+    'time_nightsleep': [900, 840, 863, 788, 801, 893, 867],  # 분 단위
+    'time_totalsleep': [1080, 995, 983, 948, 933, 1004, 1010],  # 분 단위
+    'num_daysleep': [4, 1, 2, 3, 1, 3, 2],
+    'child_age': 6,
+    'child_name': '동동이'
+})
 
 # 주간 데이터 가져오기
-def fetch_weekly_sleep_data():
-    mydb = connect_to_database()
-    with mydb.cursor() as cursor:
-        week_ago = datetime.now() - timedelta(days=7)
-        week_ago_str = week_ago.strftime('%Y-%m-%d')
-        today_str = datetime.now().strftime('%Y-%m-%d')
+# 주간 데이터 가져오기 함수 수정
+def fetch_weekly_sleep_data(df):
+    # 현재 날짜와 7일 전 날짜 계산
+    today = pd.to_datetime('today').normalize()
+    week_ago = today - pd.Timedelta(days=6)  # 7일간의 데이터를 포함하기 위해 6일 전으로 설정
 
-        query = """
-        SELECT date, time_daysleep, time_nightsleep, time_totalsleep, num_daysleep, child_age, child_name
-        FROM BabySleepRecord
-        WHERE date BETWEEN %s AND %s
-        ORDER BY date ASC;
-        """
-        cursor.execute(query, (week_ago_str, today_str))
-        result = cursor.fetchall()
-    mydb.close()
-    return pd.DataFrame(result)
+    # 조건에 맞는 데이터 필터링
+    filtered_df = df[(df['date'] >= week_ago) & (df['date'] <= today)]
+
+    return filtered_df
+
 
 # 색상 코드
 day_sleep_color = '#fdc004'  
@@ -263,12 +257,10 @@ def show_analysis_in_box(response):
 
             
 
-
 def main():
     st.image(pic2_path, width=100)
     st.title("수면 Report")
     
-    df = fetch_weekly_sleep_data()
 
     # 낮잠 및 밤잠 시간 정보 표시
     avg_day_sleep, avg_total_sleep = calculate_sleep_averages(df)

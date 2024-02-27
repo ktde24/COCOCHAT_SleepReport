@@ -8,4 +8,3 @@ numpy
 pandas
 plotly==5.19.0
 matplotlib
-pymysql==1.1.0
