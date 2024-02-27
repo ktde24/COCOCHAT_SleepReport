@@ -112,7 +112,7 @@ df = pd.DataFrame({
     'time_nightsleep': [900, 840, 863, 788, 801, 893, 867],  # 분 단위
     'time_totalsleep': [1080, 995, 983, 948, 933, 1004, 1010],  # 분 단위
     'num_daysleep': [4, 1, 2, 3, 1, 3, 2],
-    'child_age': 6,
+    'child_age': 3,
     'child_name': '동동이'
 })
 
