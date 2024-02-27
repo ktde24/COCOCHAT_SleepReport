@@ -28,6 +28,10 @@ pic2_path = os.path.join(icon_path, "baby.png")
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 os.environ['TOKENIZERS_PARALLELISM'] = st.secrets['TOKENIZERS_PARALLELISM']
 
+# CSS 파일을 읽고
+style_path = os.path.join(current_dir, "style.css")
+with open(style_path) as css:
+    st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 # ChatOpenAI 모델 인스턴스 생성
 chat_model = ChatOpenAI(temperature=0.1,
@@ -64,11 +68,6 @@ memory = ConversationSummaryMemory(
     output_key='answer',
     return_messages=True
 )
-
-category = ""
-
-
-
 
 template="""
 ### You are an assistant who helps parents with parenting. 
@@ -108,16 +107,15 @@ def format_minutes(minutes):
 # 데이터프레임 생성 
 df = pd.DataFrame({
     'date': pd.date_range(start='2024-02-21', periods=7, freq='D'),
-    'time_daysleep': [180, 155, 120, 160, 132, 111, 143],  # 분 단위
-    'time_nightsleep': [900, 840, 863, 788, 801, 893, 867],  # 분 단위
-    'time_totalsleep': [1080, 995, 983, 948, 933, 1004, 1010],  # 분 단위
+    'time_daysleep': [200, 255, 320, 260, 232, 198, 302],  # 분 단위
+    'time_nightsleep': [600, 540, 563, 688, 582, 592, 608],  # 분 단위
+    'time_totalsleep': [800, 795, 883, 948, 814, 790, 910],  # 분 단위
     'num_daysleep': [4, 1, 2, 3, 1, 3, 2],
     'child_age': 3,
     'child_name': '동동이'
 })
 
 # 주간 데이터 가져오기
-# 주간 데이터 가져오기 함수 수정
 def fetch_weekly_sleep_data(df):
     # 현재 날짜와 7일 전 날짜 계산
     today = pd.to_datetime('today').normalize()
@@ -130,9 +128,9 @@ def fetch_weekly_sleep_data(df):
 
 
 # 색상 코드
-day_sleep_color = '#fdc004'  
-night_sleep_color = '#e86f0d' 
-gray_color = '#595959'
+day_sleep_color = '#BBC8FE'  
+night_sleep_color = '#5B7EF7' 
+gray_color = '#F5F6FA'
 
 
 # 시각화 함수
@@ -171,10 +169,18 @@ def visualize_sleep_data(df):
             xanchor="left",
             yanchor="middle"
         )
+     # 글씨체 설정
+    fig.update_layout(
+        font=dict(
+            family="IBMPlexSansKR-Regular",  # 여기에 원하는 글씨체 이름을 넣습니다.
+            size=12,
+            color="black"
+        )
+    )
 
     # 막대를 그룹화하도록 barmode를 'stack'으로 변경
     fig.update_layout(
-        title='동동이의 주간 수면 시간',
+        title='<동동이의 주간 수면 시간>',
         xaxis=dict(
             title='수면 시간 (시간)',
             showline=True,
@@ -215,11 +221,20 @@ def visualize_sleep_comparison(df, peer_avg_day_sleep=3, peer_avg_night_sleep=11
     peer_sleep = [peer_avg_day_sleep, peer_avg_night_sleep, peer_avg_total_sleep]
 
     fig = go.Figure(data=[
-        go.Bar(name='동동이', x=categories, y=your_sleep, marker_color=day_sleep_color, width=0.4, text=[f"{x:.1f}h" for x in your_sleep], textposition='auto'),
-        go.Bar(name='또래 평균', x=categories, y=peer_sleep, marker_color=gray_color, width=0.4, text=[f"{x:.1f}h" for x in peer_sleep], textposition='auto')
+        go.Bar(name='동동이', x=categories, y=your_sleep, marker_color=night_sleep_color, width=0.4, text=[f"{x:.1f}h" for x in your_sleep], textposition='auto'),
+        go.Bar(name='또래 평균', x=categories, y=peer_sleep, marker_color=day_sleep_color, width=0.4, text=[f"{x:.1f}h" for x in peer_sleep], textposition='auto')
     ])
+
+     # 글씨체 설정
     fig.update_layout(
-        title='수면 시간 비교',
+        font=dict(
+            family="IBMPlexSansKR-Regular",  
+            size=12,
+            color="black"
+        )
+    )
+    fig.update_layout(
+        title='<또래와의 수면 시간 비교>',
         #xaxis=dict(title='카테고리'),
         yaxis=dict(title='시간 (시간)'),
         barmode='group'
@@ -255,53 +270,48 @@ def show_analysis_in_box(response):
     </div>
     """, unsafe_allow_html=True)
 
-            
 
-def main():
-    st.image(pic2_path, width=100)
-    st.title("수면 Report")
-    
+def main():        
+    col1, col2 = st.columns([1, 6])
+    with col1:
+        st.image(pic2_path, width=100)  # 이미지를 왼쪽 칼럼에 배치
+    with col2:
+        st.markdown("""
+        <h1 style='text-align: font-size: 36px; font-family: "IBMPlexSansKR-Regular"; color: #091747;'>수면 Report</h1>
+        <h5 style='text-align: font-size: 16px; font-family: "IBMPlexSansKR-Regular"; color: #091747;'>동동이의 주간 수면 분석 결과를 제공합니다.</h5>
+        """, unsafe_allow_html=True)
 
     # 낮잠 및 밤잠 시간 정보 표시
-    avg_day_sleep, avg_total_sleep = calculate_sleep_averages(df)
-    avg_day_sleep_str = format_minutes(avg_day_sleep)
-    avg_total_sleep_str = format_minutes(avg_total_sleep)
-    #avg_night_sleep_str = format_minutes(avg_total_sleep - avg_day_sleep)
+        avg_day_sleep, avg_total_sleep = calculate_sleep_averages(df)
+        avg_day_sleep_str = format_minutes(avg_day_sleep)
+        avg_total_sleep_str = format_minutes(avg_total_sleep)
+        
+        if not df.empty:
+            # 시각화
+            fig_bar = visualize_sleep_data(df)
+            st.plotly_chart(fig_bar, use_container_width=True)
+            
+            # 스타일링된 텍스트 표시
+            st.markdown(f"<div style='background-color:#ffffff; padding:10px; border-radius:5px; margin-top:10px;'>"
+                        f"<h5 style='color:#595959;'><b>지난주 평균 낮잠 시간:</b> {avg_day_sleep_str}</h5>"
+                        f"<h5 style='color:#595959;'><b>지난주 평균 총 수면 시간:</b> {avg_total_sleep_str}</h5>"
+                        f"</div>", unsafe_allow_html=True)
+            
+            # 동동이와 또래 평균 수면 시간 비교 막대 그래프 시각화
+            fig_comparison = visualize_sleep_comparison(df)
+            st.plotly_chart(fig_comparison, use_container_width=True)
 
-    
-    if not df.empty:
-
-        # 시각화
-        fig_bar = visualize_sleep_data(df)
-        st.plotly_chart(fig_bar, use_container_width=True)
-
-        #st.write(f"**지난 평균 낮잠 시간: {avg_day_sleep_str}")
-        #st.write(f"**지난주 평균 총 수면 시간: {avg_total_sleep_str}")
-
-         # 스타일링된 텍스트 표시
-        st.markdown(f"<div style='background-color:#ffffff; padding:10px; border-radius:5px; margin-top:10px;'>"
-                    f"<h5 style='color:#595959;'><b>지난주 평균 낮잠 시간:</b> {avg_day_sleep_str}</h5>"
-                    f"<h5 style='color:#595959;'><b>지난주 평균 총 수면 시간:</b> {avg_total_sleep_str}</h5>"
-                    f"</div>", unsafe_allow_html=True)
-
-        # 동동이와 또래 평균 수면 시간 비교 막대 그래프 시각화
-        fig_comparison = visualize_sleep_comparison(df)
-        st.plotly_chart(fig_comparison, use_container_width=True)
-
-        # 챗봇의 주간 평균 수면 시간에 대한 분석을 요청하고 표시
-        child_age = df['child_age']
-        child_name = df['child_name']
-        chatbot_response = ask_chatbot_about_sleep_averages(
-            avg_day_sleep, avg_total_sleep, child_age, child_name
-        )
-        st.image(pic_path, width=100)
-        show_analysis_in_box(chatbot_response)
-        #st.write(f"**Dr.COCO의 분석:** {chatbot_response}")
-
-
-    
-    else:
-        st.write("지난주의 수면 데이터가 없습니다.")
-
+            # 챗봇의 주간 평균 수면 시간에 대한 분석을 요청하고 표시
+            child_age = df['child_age']
+            child_name = df['child_name']
+            chatbot_response = ask_chatbot_about_sleep_averages(
+                avg_day_sleep, avg_total_sleep, child_age, child_name
+                )
+            st.image(pic_path, width=100)
+            show_analysis_in_box(chatbot_response)
+            
+        else:
+            st.markdown("지난주의 수면 데이터가 없습니다.")
+            
 if __name__ == "__main__":
     main()

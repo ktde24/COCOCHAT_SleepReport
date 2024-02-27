@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'IBMPlexSansKR-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'IBMPlexSansKR-Regular', sans-serif; /* 기본 폰트 설정, 폴백 폰트 추가 */
+}
+
+span {
+    font-family: 'IBMPlexSansKR-Regular', sans-serif; /* span 태그 폰트 설정, 폴백 폰트 추가 */
+    font-weight: 700;
+    color: #091747;
+}
+
+/* 컨테이너 박스 스타일 */
+.container {
+    border-radius: 15px; /* 둥근 모서리 설정 */
+    background-color: #e0e0e0; /* 박스 밝기 조절 */
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* 박스에 그림자 추가 */
+}
+
+/* 제목 스타일 */
+.title {
+    font-size: 24px; /* 제목 글자 크기 */
+    text-align: left; /* 왼쪽 정렬 */
+    font-weight: bold;
+    margin-bottom: 20px; /* 제목 아래 여백 추가 */
+}
+
+/* 차트 제목 스타일 */
+.chart-title {
+    font-size: 20px; /* 차트 제목 글자 크기 */
+    text-align: center; /* 중앙 정렬 */
+    font-weight: bold;
+    margin-bottom: 10px; /* 차트 제목 아래 여백 추가 */
+}
+
+.st-emotion-cache-7ym5gk.ef3psqc12{
+    background-color: #5B7DFC;
+    color: white;
+    border-radius: 28px;
+    padding: 12px;
+}
