@@ -5,12 +5,15 @@ import pandas as pd
 import streamlit as st
 import os
 from datetime import datetime, timedelta
-from langchain.chat_models import ChatOpenAI
+#from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 #import mysql.connector
 from langchain_core.output_parsers import StrOutputParser 
-from langchain.embeddings import HuggingFaceEmbeddings
+#from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chains.conversation.memory import ConversationSummaryMemory
 import tiktoken
@@ -253,6 +256,7 @@ def ask_chatbot_about_sleep_averages(avg_day_sleep, avg_total_sleep, child_age, 
     )
     
     chatbot_response = chain(chatbot_question)  # 챗봇에게 질문을 전달하고 응답을 받기.
+    #chat_response = chat_model.invoke(question="What is the weather today?", context="Some context here")
     
     return chatbot_response['answer']  # 챗봇의 응답 텍스트를 반환
 
