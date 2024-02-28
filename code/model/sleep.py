@@ -134,8 +134,8 @@ gray_color = '#F5F6FA'
 
 # 시각화 함수
 def visualize_sleep_data(df):
-    #df['date'] = pd.to_datetime(df['date'],errors = 'coerce').dt.strftime('%m.%d')
-    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d').dt.strftime('%m.%d')
+    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d',errors = 'coerce').dt.strftime('%m.%d')
+    #df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d').dt.strftime('%m.%d')
     fig = go.Figure()
 
     # 낮잠 시간 가로 막대 그래프 추가
