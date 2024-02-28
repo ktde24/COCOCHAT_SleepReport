@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timedelta
 #from langchain.chat_models import ChatOpenAI
 from langchain_community.chat_models import ChatOpenAI
-from langchain_openai import ChatOpenAI
+#from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 #import mysql.connector
